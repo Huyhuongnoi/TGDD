@@ -27,7 +27,7 @@ public class View {
     public static void viewProduct() {
         ArrayList<Product> productArrayList = mobileWorld.productList();
         for (Product product : productArrayList) {
-            System.out.println(product);
+            System.out.println(product.toString());
         }
     }
 
@@ -36,7 +36,7 @@ public class View {
         String userId = scanner.nextLine();
         ArrayList<OrderDetail> orderDetailArrayList = mobileWorld.purchaseHistory(userId);
         for (OrderDetail orderDetail : orderDetailArrayList) {
-            System.out.println(orderDetail);
+            System.out.println(orderDetail.toString());
         }
     }
 
@@ -62,6 +62,8 @@ public class View {
                     viewRegistrationInformation();
                     break;
                 case 2:
+                    System.out.println("list of products:");
+                    viewProduct();
                     viewBuyProduct();
                     break;
                 case 3:
