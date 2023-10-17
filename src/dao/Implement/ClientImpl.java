@@ -1,10 +1,9 @@
-package Implement;
+package dao.Implement;
 
 import dao.ClientDAO;
 import dao.DataSource;
 import model.Client;
 
-import static Constant.Constant.ConstantClient;
 import static Constant.Constant.ConstantClient.*;
 
 import java.sql.Connection;

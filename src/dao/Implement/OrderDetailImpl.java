@@ -1,9 +1,8 @@
-package Implement;
+package dao.Implement;
 
 import dao.DataSource;
-import dao.ProductDAO;
-import model.Client;
-import model.Product;
+import dao.OrderDetailDao;
+import model.OrderDetail;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,22 +10,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import static Constant.Constant.ConstantProduct.*;
+import static Constant.Constant.ConstantOrder.*;
 
-
-public class ProductImpl implements ProductDAO<Product> {
+public class OrderDetailImpl implements OrderDetailDao<OrderDetail> {
     @Override
-    public void insertProduct(Product product) {
+    public void insertOrder(OrderDetail orderDetail) {
         Connection connection = null;
         try {
             connection = DataSource.getInstance().getConnection();
-            String sql = INSERT_PRODUCT.formatted(TABLE_NAME, COLUMN_1, COLUMN_2,
+            String sql = INSERT_Order.formatted(TABLE_NAME, COLUMN_2,
                     COLUMN_3, COLUMN_4);
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, product.getId());
-            preparedStatement.setString(2, product.getProductName());
-            preparedStatement.setFloat(3, product.getRate());
-            preparedStatement.setInt(4, product.getQuantity());
+            preparedStatement.setString(1, orderDetail.getCustomerId());
+            preparedStatement.setString(2, orderDetail.getProductId());
+            preparedStatement.setInt(3, orderDetail.getQuantity());
             int result = preparedStatement.executeUpdate();
             if (result != 0) {
                 System.out.println("added successfully!");
@@ -49,21 +46,20 @@ public class ProductImpl implements ProductDAO<Product> {
                 }
             }
         }
-
     }
 
     @Override
-    public void updateProduct(Product product) {
+    public void updateOrder(int id, OrderDetail orderDetail) {
         Connection connection = null;
         try {
             connection = DataSource.getInstance().getConnection();
-            String sql = UPDATE_PRODUCT.formatted(TABLE_NAME, COLUMN_2, COLUMN_3,
+            String sql = UPDATE_Order.formatted(TABLE_NAME, COLUMN_2, COLUMN_3,
                     COLUMN_4, COLUMN_1);
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, product.getProductName());
-            preparedStatement.setFloat(2, product.getRate());
-            preparedStatement.setInt(3, product.getQuantity());
-            preparedStatement.setString(4, product.getId());
+            preparedStatement.setString(1, orderDetail.getCustomerId());
+            preparedStatement.setString(2, orderDetail.getProductId());
+            preparedStatement.setInt(3, orderDetail.getQuantity());
+            preparedStatement.setInt(4, id);
             int result = preparedStatement.executeUpdate();
             connection.commit();
             if (result != 0) {
@@ -87,17 +83,16 @@ public class ProductImpl implements ProductDAO<Product> {
                 }
             }
         }
-
     }
 
     @Override
-    public void deleteProduct(String id) {
+    public void deleteOrder(int id) {
         Connection connection = null;
         try {
             connection = DataSource.getInstance().getConnection();
-            String sql = DELETE_PRODUCT.formatted(TABLE_NAME, COLUMN_1);
+            String sql = DELETE_Order.formatted(TABLE_NAME, COLUMN_1);
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, id);
+            preparedStatement.setInt(1, id);
             int result = preparedStatement.executeUpdate();
             if (result != 0) {
                 System.out.println("delete successfully!");
@@ -124,23 +119,22 @@ public class ProductImpl implements ProductDAO<Product> {
     }
 
     @Override
-    public ArrayList<Product> selectProduct() {
+    public ArrayList<OrderDetail> selectOrder() {
         Connection connection = null;
-        ArrayList<Product> productArrayList = new ArrayList<Product>();
+        ArrayList<OrderDetail> orderDetailArrayList = new ArrayList<OrderDetail>();
         try {
             connection = DataSource.getInstance().getConnection();
-            String sql = SELECT_PRODUCT.formatted(TABLE_NAME);
+            String sql = SELECT_Order.formatted(TABLE_NAME);
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                String id = resultSet.getString(COLUMN_1);
-                String productName = resultSet.getString(COLUMN_2);
-                float rate = resultSet.getFloat(COLUMN_3);
+                String customerId = resultSet.getString(COLUMN_2);
+                String productId = resultSet.getString(COLUMN_3);
                 int quantity = resultSet.getInt(COLUMN_4);
-                Product product = new Product(id, productName, rate, quantity);
-                productArrayList.add(product);
+                OrderDetail orderDetail = new OrderDetail(customerId, productId, quantity);
+                orderDetailArrayList.add(orderDetail);
             }
-            if (productArrayList != null) {
+            if (orderDetailArrayList != null) {
                 System.out.println("select successfully!");
             }
         } catch (SQLException e) {
@@ -154,27 +148,26 @@ public class ProductImpl implements ProductDAO<Product> {
                 }
             }
         }
-        return productArrayList;
+        return orderDetailArrayList;
     }
 
     @Override
-    public Product findById(String id) {
+    public OrderDetail findById(int id) {
         Connection connection = null;
-        Product product = null;
+        OrderDetail orderDetail = null;
         try {
             connection = DataSource.getInstance().getConnection();
             String sql = SELECT_BY_ID.formatted(TABLE_NAME, COLUMN_1);
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, id);
+            preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                String idProduct = resultSet.getString(COLUMN_1);
-                String productName = resultSet.getString(COLUMN_2);
-                float rate = resultSet.getFloat(COLUMN_3);
+                String customerId = resultSet.getString(COLUMN_2);
+                String productId = resultSet.getString(COLUMN_3);
                 int quantity = resultSet.getInt(COLUMN_4);
-                product = new Product(idProduct, productName, rate, quantity);
+                orderDetail = new OrderDetail(customerId, productId, quantity);
             }
-            if (product != null) {
+            if (orderDetail != null) {
                 System.out.println("select by id successfully!");
             }
         } catch (SQLException e) {
@@ -188,6 +181,39 @@ public class ProductImpl implements ProductDAO<Product> {
                 }
             }
         }
-        return product;
+        return orderDetail;
+    }
+
+    @Override
+    public ArrayList<OrderDetail> selectByCustomerId(String userId) {
+        Connection connection = null;
+        ArrayList<OrderDetail> orderDetailArrayList = new ArrayList<OrderDetail>();
+        try {
+            connection = DataSource.getInstance().getConnection();
+            String sql = SELECT_BY_CUSTOMER_ID.formatted(TABLE_NAME, userId);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                String customerId = resultSet.getString(COLUMN_2);
+                String productId = resultSet.getString(COLUMN_3);
+                int quantity = resultSet.getInt(COLUMN_4);
+                OrderDetail orderDetail = new OrderDetail(customerId, productId, quantity);
+                orderDetailArrayList.add(orderDetail);
+            }
+            if (orderDetailArrayList != null) {
+                System.out.println("select successfully!");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    System.out.println("Error closing");
+                }
+            }
+        }
+        return orderDetailArrayList;
     }
 }
