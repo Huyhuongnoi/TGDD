@@ -1,4 +1,4 @@
-package Constant;
+package constant;
 
 public class Constant {
     public static class ConstantProduct {

@@ -1,4 +1,4 @@
-package dao.Implement;
+package dao.implement;
 
 import dao.DataSource;
 import dao.ProductDAO;
@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import static Constant.Constant.ConstantProduct.*;
+import static constant.Constant.ConstantProduct.*;
 
 
 public class ProductImpl implements ProductDAO<Product> {

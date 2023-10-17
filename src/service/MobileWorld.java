@@ -1,8 +1,8 @@
 package service;
 
-import dao.Implement.ClientImpl;
-import dao.Implement.OrderDetailImpl;
-import dao.Implement.ProductImpl;
+import dao.implement.ClientImpl;
+import dao.implement.OrderDetailImpl;
+import dao.implement.ProductImpl;
 import model.Client;
 import model.OrderDetail;
 import model.Product;
