@@ -5,6 +5,7 @@ import model.Product;
 import service.MobileWorld;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class View {
@@ -40,7 +41,7 @@ public class View {
         }
     }
 
-    public static void viewBuyProduct() {
+    public static int viewBuyProduct() {
         System.out.print("Enter customer id: ");
         String customerId = scanner.nextLine();
         System.out.print("Enter product id: ");
@@ -48,7 +49,7 @@ public class View {
         System.out.print("Enter quantity: ");
         int quantity = scanner.nextInt();
         scanner.nextLine();
-        mobileWorld.buyMobilePhone(customerId, productId, quantity);
+        return mobileWorld.buyMobilePhone(customerId, productId, quantity);
     }
 
     public static void main(String[] args) {
@@ -64,7 +65,14 @@ public class View {
                 case 2:
                     System.out.println("list of products:");
                     viewProduct();
-                    viewBuyProduct();
+                    int result = viewBuyProduct();
+                    if(result == -1){
+                        String choose = scanner.next();
+                        if(Objects.equals(choose, "Y")){
+                            viewRegistrationInformation();
+                            break;
+                        }
+                    }
                     break;
                 case 3:
                     viewPurchaseHistory();
